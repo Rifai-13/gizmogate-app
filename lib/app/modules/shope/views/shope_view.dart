@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../routes/app_pages.dart';
+import '../../navbar/views/navbar_view.dart';
 import '../controllers/shope_controller.dart';
 
 class ShopeView extends StatefulWidget {
@@ -10,23 +11,7 @@ class ShopeView extends StatefulWidget {
 
 class _ShopeViewState extends State<ShopeView> {
   final ShopeController controller = Get.find<ShopeController>();
-  int _selectedIndex = 1; // Set the initial index to 1 for Shopee tab
-
-  // Directly navigate to the respective route when an item is tapped
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    // Navigate to the corresponding route
-    if (index == 0) {
-      Get.toNamed(Routes.HOME); // Navigate to Home screen
-    } else if (index == 1) {
-      Get.toNamed(Routes.SHOPE); // Navigate to Shope screen
-    } else if (index == 2) {
-      Get.toNamed(Routes.TRANSAKSI); // Navigate to Transaksi screen
-    }
-  }
+  // int _selectedIndex = 1; // Set the initial index to 1 for Shopee tab
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +55,10 @@ class _ShopeViewState extends State<ShopeView> {
                   IconButton(
                       icon: Icon(Icons.shopping_cart, color: Colors.white),
                       onPressed: () {}),
+                  IconButton(
+                    icon: Icon(Icons.person, color: Colors.white),
+                    onPressed: () {},
+                  )
                 ],
                 backgroundColor: Colors.transparent,
                 elevation: 0,
@@ -229,35 +218,7 @@ class _ShopeViewState extends State<ShopeView> {
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        color: Colors.black, // Background color for the bottom navigation bar
-        child: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag),
-              label: 'Shopee',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              label: 'Transaksi',
-            ),
-          ],
-          currentIndex: _selectedIndex, // Make sure this is 1 for Shopee
-          onTap: _onItemTapped, // Trigger navigation on tap
-          selectedItemColor: Colors.orange, // Set selected item color to orange
-          unselectedItemColor: Colors.white, // Unselected item color
-          selectedFontSize: 12, // Set the same font size for selected items
-          unselectedFontSize: 12, // Set the same font size for unselected items
-          iconSize: 24, // Set a consistent icon size
-          type: BottomNavigationBarType.fixed, // Prevents shifting effect
-          backgroundColor:
-              Colors.transparent, // Make the background transparent
-        ),
-      ),
+      bottomNavigationBar: const NavbarView(),
     );
   }
 

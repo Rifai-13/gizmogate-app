@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../../routes/app_pages.dart';
+
 class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -24,7 +26,7 @@ class LoginController extends GetxController {
 
       if (userCredential.user != null) {
         Get.snackbar("Success", "Logged in successfully");
-        Get.offAllNamed('/home');
+        Get.offAllNamed(Routes.HOME);
       }
     } on FirebaseAuthException catch (e) {
       String message;
