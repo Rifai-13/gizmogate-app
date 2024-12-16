@@ -1,4 +1,10 @@
 import 'package:get/get.dart';
+import 'package:gizmogate/app/modules/admin-profile/bindings/admin_profile_binding.dart';
+import 'package:gizmogate/app/modules/admin-profile/views/admin_profile_view.dart';
+import 'package:gizmogate/app/modules/auth-admin/bindings/auth_admin_bindings.dart';
+import 'package:gizmogate/app/modules/auth-admin/views/auth_admin_view.dart';
+import 'package:gizmogate/app/modules/consign/bindings/consign_binding.dart';
+import 'package:gizmogate/app/modules/consign/views/consign_view.dart';
 
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
@@ -22,7 +28,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.REGISTER;
+  static const INITIAL = Routes.HOME;
 
   static final routes = [
     GetPage(
@@ -59,6 +65,21 @@ class AppPages {
       name: _Paths.NAVBAR,
       page: () => NavbarView(),
       binding: NavbarBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADMIN_PROFILE,
+      page: () => AdminView(),
+      binding: AdminBinding(),
+    ),
+    GetPage(
+      name: _Paths.AUTH_ADMIN,
+      page: () => AuthView(),
+      binding: AuthBinding(),
+    ),
+    GetPage(
+      name: _Paths.CONSIGN,
+      page: () => ConsignView(),
+      binding: ConsignBinding(),
     )
   ];
 }
