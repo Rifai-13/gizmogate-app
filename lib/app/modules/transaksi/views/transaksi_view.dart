@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gizmogate/app/modules/transaksi/controllers/transaksi_controller.dart';
-
 import '../../navbar/views/navbar_view.dart';
 
 class TransaksiView extends GetView<TransaksiController> {
   TransaksiView({super.key});
+
   @override
   Widget build(BuildContext context) {
     final TransaksiController controller = Get.put(TransaksiController());
+     final item = Get.arguments; 
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Transaksi"),
+        title: Text("Transaksi", style: TextStyle(fontWeight: FontWeight.w600)),
         actions: [
           IconButton(
             icon: Icon(Icons.notifications),
@@ -31,41 +32,167 @@ class TransaksiView extends GetView<TransaksiController> {
       body: Column(
         children: [
           SizedBox(height: 16),
-          // Membungkus Row dengan SingleChildScrollView agar bisa digulir secara horizontal
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                buildFilterButton(controller, TransaksiFilter.semuaPesanan, "Semua Pesanan"),
-                buildFilterButton(controller, TransaksiFilter.dalamPengiriman, "Dalam Pengiriman"),
-                buildFilterButton(controller, TransaksiFilter.pesananSelesai, "Pesanan Selesai"),
+                buildFilterButton(
+                    controller, TransaksiFilter.semuaPesanan, "Semua Pesanan"),
+                buildFilterButton(controller, TransaksiFilter.dalamPengiriman,
+                    "Dalam Pengiriman"),
+                buildFilterButton(controller, TransaksiFilter.pesananSelesai,
+                    "Pesanan Selesai"),
               ],
             ),
           ),
           SizedBox(height: 16),
           Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.handshake, size: 100, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    "Belum Ada Transaksi",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            child: Obx(() {
+              if (controller.filteredProducts.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.shopping_cart_outlined,
+                          size: 100, color: Colors.grey),
+                      SizedBox(height: 16),
+                      Text(
+                        "Belum Ada Transaksi",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87),
+                      ),
+                      Text(
+                        "Belum Ada Transaksi pada filter yang diterapkan",
+                        style: TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
+                    ],
                   ),
-                  Text(
-                    "Belum Ada Transaksi pada filter yang diterapkan",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
+                );
+              } else {
+                return ListView.builder(
+                  itemCount: controller.filteredProducts.length,
+                  itemBuilder: (context, index) {
+                    final product = controller.filteredProducts[index];
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      child: ListTile(
+                        title: Text(product.name,
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(product.description),
+                            if (product.status == "pesananSelesai")
+                              Obx(() {
+                                final reviews = controller
+                                    .getReviewsForProduct(product.name);
+                                if (reviews.isNotEmpty) {
+                                  final review = reviews.first;
+                                  return Text(
+                                    "Rating: ${review.rating} | Comment: ${review.comment}",
+                                    style: TextStyle(color: Colors.grey),
+                                  );
+                                } else {
+                                  return Text(
+                                    "Belum ada ulasan.",
+                                    style: TextStyle(color: Colors.grey),
+                                  );
+                                }
+                              }),
+                          ],
+                        ),
+                        trailing: product.status == "pesananSelesai"
+                            ? Text("Selesai",
+                                style: TextStyle(color: Colors.green))
+                            : ElevatedButton(
+                                onPressed: () {
+                                  controller.markAsCompleted(product); // Perbaiki kesalahan penulisan
+                                },
+                                child: Text("Selesaikan"),
+                              ),
+                        onTap: () {
+                          if (product.status == "pesananSelesai") {
+                            showReviewDialog(context, product);
+                          }
+                        },
+                      ),
+                    );
+                  },
+                );
+              }
+            }),
           ),
         ],
       ),
       bottomNavigationBar: const NavbarView(),
+    );
+  }
+
+  void showReviewDialog(BuildContext context, Product product) {
+    var existingReview = controller.getReviewsForProduct(product.name).isNotEmpty
+        ? controller.getReviewsForProduct(product.name).first
+        : null;
+
+    TextEditingController commentController = TextEditingController(
+      text: existingReview?.comment ?? '',
+    );
+    double rating = existingReview?.rating ?? 0.0;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Berikan Ulasan untuk ${product.name}"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: commentController,
+                decoration: InputDecoration(labelText: "Komentar"),
+              ),
+              Slider(
+                value: rating,
+                min: 0,
+                max: 5,
+                divisions: 5,
+                label: rating.toString(),
+                onChanged: (value) {
+                  rating = value;
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (existingReview == null) {
+                  controller.addReview(
+                    Review(
+                        productName: product.name,
+                        comment: commentController.text,
+                        rating: rating),
+                  );
+                } else {
+                  controller.updateReview(
+                    product.name,
+                    commentController.text,
+                    rating,
+                  );
+                }
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                  existingReview == null ? "Kirim Ulasan" : "Perbarui Ulasan"),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -75,19 +202,32 @@ class TransaksiView extends GetView<TransaksiController> {
       bool isSelected = controller.selectedFilter.value == filter;
       return GestureDetector(
         onTap: () => controller.updateFilter(filter),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          margin: EdgeInsets.symmetric(horizontal: 4),
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          margin: EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.black : Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.black),
+            gradient: isSelected
+                ? LinearGradient(colors: [Colors.black, Colors.black])
+                : null,
+            color: isSelected ? null : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: isSelected ? Colors.black : Colors.grey),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5)
+                  ]
+                : [],
           ),
           child: Text(
             title,
             style: TextStyle(
               color: isSelected ? Colors.white : Colors.black,
               fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
           ),
         ),
