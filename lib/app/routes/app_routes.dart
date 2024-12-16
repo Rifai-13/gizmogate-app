@@ -9,7 +9,7 @@ abstract class Routes {
   static const SHOPE = _Paths.SHOPE;
   static const PROFILE = _Paths.PROFILE;
   static const NAVBAR = _Paths.NAVBAR;
-
+  static const CONSIGN = _Paths.CONSIGN;
 }
 
 abstract class _Paths {
@@ -20,4 +20,5 @@ abstract class _Paths {
   static const SHOPE = '/shope';
   static const PROFILE = '/profile';
   static const NAVBAR = '/navbar';
+  static const CONSIGN = '/consign';
 }

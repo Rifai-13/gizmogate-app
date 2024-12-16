@@ -4,6 +4,7 @@ import 'package:gizmogate/app/modules/shope/views/shope_view.dart';
 import '../../home/views/home_view.dart';
 import '../../profile/views/profile_view.dart';
 import '../../transaksi/views/transaksi_view.dart';
+import '../../consign/views/consign_view.dart'; // Import view untuk Consign
 import '../controllers/navbar_controller.dart';
 
 class NavbarView extends StatelessWidget {
@@ -25,6 +26,10 @@ class NavbarView extends StatelessWidget {
             label: 'Shope',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle),
+            label: 'Consign', // Tambahkan item baru untuk Consign
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
             label: 'Transaksi',
           ),
@@ -35,7 +40,8 @@ class NavbarView extends StatelessWidget {
         ],
         currentIndex: controller.currentIndex.value,
         selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey , // Menggunakan currentIndex dari controller
+        unselectedItemColor:
+            Colors.grey, // Menggunakan currentIndex dari controller
         onTap: (index) {
           controller.currentIndex.value = index; // Update currentIndex
           switch (index) {
@@ -46,9 +52,12 @@ class NavbarView extends StatelessWidget {
               Get.off(() => ShopeView());
               break;
             case 2:
-              Get.off(() => TransaksiView());
+              Get.off(() => ConsignView()); // Tambahkan navigasi ke ConsignView
               break;
             case 3:
+              Get.off(() => TransaksiView());
+              break;
+            case 4:
               Get.off(() => ProfileView());
               break;
           }
