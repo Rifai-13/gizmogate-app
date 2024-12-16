@@ -110,7 +110,7 @@ class _ShopeViewState extends State<ShopeView> {
                       final item = controller.filteredItems[index];
                       return GestureDetector(
                         onTap: () {
-                          // Tindakan saat item di-tap
+                          Get.toNamed(Routes.DETAIL_PESANAN,arguments: item);
                         },
                         child: Card(
                           margin: EdgeInsets.all(8),
