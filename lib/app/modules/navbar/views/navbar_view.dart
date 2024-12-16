@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gizmogate/app/modules/admin-profile/views/admin_profile_view.dart';
 import 'package:gizmogate/app/modules/shope/views/shope_view.dart';
 import '../../home/views/home_view.dart';
 import '../../profile/views/profile_view.dart';
@@ -37,32 +38,65 @@ class NavbarView extends StatelessWidget {
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.admin_panel_settings),
+            label: 'Admin',
+          ),
         ],
         currentIndex: controller.currentIndex.value,
         selectedItemColor: Colors.black,
-        unselectedItemColor:
-            Colors.grey, // Menggunakan currentIndex dari controller
+        unselectedItemColor: Colors.grey,
         onTap: (index) {
           controller.currentIndex.value = index; // Update currentIndex
+
+          // Pop all previous pages and push the new page with smooth transition
           switch (index) {
             case 0:
-              Get.off(() => HomeView());
+              Navigator.pushReplacement(
+                context,
+                _createRoute(HomeView()),
+              );
               break;
             case 1:
-              Get.off(() => ShopeView());
+              Navigator.pushReplacement(
+                context,
+                _createRoute(ShopeView()),
+              );
               break;
             case 2:
-              Get.off(() => ConsignView()); // Tambahkan navigasi ke ConsignView
+              Navigator.pushReplacement(
+                context,
+                _createRoute(TransaksiView()),
+              );
               break;
             case 3:
-              Get.off(() => TransaksiView());
+              Navigator.pushReplacement(
+                context,
+                _createRoute(ProfileView()),
+              );
               break;
             case 4:
-              Get.off(() => ProfileView());
+              Navigator.pushReplacement(
+                context,
+                _createRoute(AdminView()),
+              );
               break;
           }
         },
       );
     });
+  }
+
+  // Function to create smooth transitions using FadeTransition with a specified duration
+  PageRouteBuilder _createRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionDuration: const Duration(
+          milliseconds: 700), // Set the transition duration to 300ms
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        // Fade transition for smooth fade-in and fade-out effect
+        return FadeTransition(opacity: animation, child: child);
+      },
+    );
   }
 }

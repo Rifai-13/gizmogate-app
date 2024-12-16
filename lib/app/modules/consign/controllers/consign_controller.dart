@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class Product {
   String name;
@@ -45,6 +46,12 @@ class ConsignController extends GetxController {
           stock: 20,
           imagePath: null),
     ]);
+  }
+
+  // Fungsi untuk memformat angka stok
+  String formatStock(int stock) {
+    final formatter = NumberFormat.decimalPattern(); // Format ribuan
+    return formatter.format(stock);
   }
 
   // Fungsi untuk memilih gambar produk
