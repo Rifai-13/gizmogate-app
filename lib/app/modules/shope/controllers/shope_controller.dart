@@ -98,8 +98,18 @@ class ShopeController extends GetxController {
   var searchQuery = ''.obs;
   var selectedCategory = ''.obs;
 
+  var transactionList = <Map<String, dynamic>>[].obs;
+
   void updateSearchQuery(String query) {
     searchQuery.value = query;
+  }
+
+  void addToTransactionList(Map<String, dynamic> item) {
+    transactionList.add(item);
+  }
+
+  void removeFromTransactionList(Map<String, dynamic> item) {
+    transactionList.remove(item);
   }
 
   void filterByCategory(String category) {

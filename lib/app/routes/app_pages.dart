@@ -6,6 +6,8 @@ import 'package:gizmogate/app/modules/auth-admin/views/auth_admin_view.dart';
 import 'package:gizmogate/app/modules/consign/bindings/consign_binding.dart';
 import 'package:gizmogate/app/modules/consign/views/consign_view.dart';
 
+import '../modules/detail_pesanan/bindings/detail_pesanan_binding.dart';
+import '../modules/detail_pesanan/views/detail_pesanan_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
@@ -80,6 +82,11 @@ class AppPages {
       name: _Paths.CONSIGN,
       page: () => ConsignView(),
       binding: ConsignBinding(),
-    )
+    ),
+    GetPage(
+      name: _Paths.DETAIL_PESANAN,
+      page: () => DetailPesananView(),
+      binding: DetailPesananBinding(),
+    ),
   ];
 }
