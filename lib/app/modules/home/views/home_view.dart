@@ -170,7 +170,7 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
             Container(
-              height: 150, // Anda bisa menyesuaikan tinggi sesuai kebutuhan
+              height: 150, // Tinggi container gambar
               child: PageView.builder(
                 itemCount: 3, // Jumlah slide yang akan ditampilkan
                 onPageChanged: (index) {
@@ -178,36 +178,67 @@ class HomeView extends GetView<HomeController> {
                       index); // Update index saat halaman digeser
                 },
                 itemBuilder: (context, index) {
+                  // Daftar teks diskon untuk setiap gambar
+                  List<String> discountTexts = [
+                    "Diskon 30%! Special Idul Fitri",
+                    "Diskon 20%! Special Natal",
+                    "Diskon 10%! Special Tahun Baru",
+                  ];
                   String imagePath =
                       'assets/slide${index + 1}.jpg'; // Gambar berdasarkan index
                   return Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5,
-                            offset: Offset(0, 2),
+                    child: Stack(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 5,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                            10), // Menjaga sudut gambar agar bulat
-                        child: Image.asset(
-                          imagePath, // Path gambar
-                          fit: BoxFit
-                              .cover, // Gambar akan menutupi seluruh container
-                          width: double
-                              .infinity, // Membuat lebar gambar 100% dari container
-                          height: double
-                              .infinity, // Membuat tinggi gambar 100% dari container
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.circular(10), // Membulatkan sudut
+                            child: Image.asset(
+                              imagePath, // Path gambar
+                              fit: BoxFit
+                                  .cover, // Gambar menutupi seluruh container
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
+                          ),
                         ),
-                      ),
+                        Positioned(
+                          bottom: 10, // Jarak dari bawah container
+                          left: 10, // Jarak dari kiri container
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4), // Padding teks
+                            decoration: BoxDecoration(
+                              color:
+                                  Colors.black54, // Latar belakang transparan
+                              borderRadius:
+                                  BorderRadius.circular(5), // Membulatkan sudut
+                            ),
+                            child: Text(
+                              discountTexts[
+                                  index], // Teks diskon sesuai index gambar
+                              style: TextStyle(
+                                color: Colors.white, // Warna teks putih
+                                fontWeight: FontWeight.bold, // Teks tebal
+                                fontSize: 12, // Ukuran teks
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
