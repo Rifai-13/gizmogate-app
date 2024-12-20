@@ -57,22 +57,31 @@ class RegisterView extends StatelessWidget {
             ),
             SizedBox(height: 16),
 
-            // Password TextField
-            TextField(
-              controller: controller.passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                hintText: 'Password',
-                prefixIcon: Icon(Icons.lock),
-                suffixIcon: Icon(Icons.visibility_off),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide.none,
+            // Password TextField with visibility toggle
+            Obx(() {
+              return TextField(
+                controller: controller.passwordController,
+                obscureText: controller.obscurePassword.value,
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  prefixIcon: Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      controller.obscurePassword.value
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
+                    onPressed: controller.togglePasswordVisibility, // Toggle visibility
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
                 ),
-                filled: true,
-                fillColor: Colors.grey[200],
-              ),
-            ),
+              );
+            }),
             SizedBox(height: 16),
 
             // Email TextField

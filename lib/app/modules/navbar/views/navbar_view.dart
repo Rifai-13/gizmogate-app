@@ -5,6 +5,7 @@ import 'package:gizmogate/app/modules/shope/views/shope_view.dart';
 import '../../home/views/home_view.dart';
 import '../../profile/views/profile_view.dart';
 import '../../transaksi/views/transaksi_view.dart';
+import '../../consign/views/consign_view.dart'; // Import view untuk Consign
 import '../controllers/navbar_controller.dart';
 
 class NavbarView extends StatelessWidget {

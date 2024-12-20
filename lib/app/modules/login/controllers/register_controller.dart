@@ -8,12 +8,12 @@ class RegisterController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Add usernameController
   var usernameController = TextEditingController();
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
 
   var isLoading = false.obs;
+  var obscurePassword = true.obs; // This variable controls password visibility
 
   // Fungsi untuk registrasi
   Future<void> signUp() async {
@@ -58,9 +58,13 @@ class RegisterController extends GetxController {
     });
   }
 
+  void togglePasswordVisibility() {
+    obscurePassword.value = !obscurePassword.value;
+  }
+
   @override
   void dispose() {
-    usernameController.dispose(); // Dispose the usernameController
+    usernameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
