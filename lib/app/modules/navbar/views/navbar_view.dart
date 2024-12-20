@@ -27,10 +27,6 @@ class NavbarView extends StatelessWidget {
             label: 'Shope',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle),
-            label: 'Consign', // Tambahkan item baru untuk Consign
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
             label: 'Transaksi',
           ),

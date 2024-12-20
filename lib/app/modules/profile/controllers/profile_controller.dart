@@ -1,23 +1,33 @@
+import 'dart:io';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileController extends GetxController {
-  //TODO: Implement ProfileController
+  var profileImage = Rx<File?>(null);
+  var email = ''.obs; // Untuk menyimpan email
+  var username = ''.obs; // Untuk menyimpan username
 
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
+  // Fungsi untuk mengupdate email dari login
+  void setEmail(String userEmail) {
+    email.value = userEmail;
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  Future<void> pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      profileImage.value = File(pickedFile.path);
+    }
   }
 
-  @override
-  void onClose() {
-    super.onClose();
+  void deleteImage() {
+    profileImage.value = null;
   }
 
-  void increment() => count.value++;
+  void updateUsername(String newUsername) {
+    username.value = newUsername;
+  }
+void updateEmail(String newEmail) {
+  email.value = newEmail;
+}
 }

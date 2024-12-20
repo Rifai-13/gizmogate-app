@@ -13,6 +13,8 @@ abstract class Routes {
   static const ADMIN_PROFILE = _Paths.ADMIN_PROFILE;
   static const CONSIGN = _Paths.CONSIGN;
   static const DETAIL_PESANAN = _Paths.DETAIL_PESANAN;
+  static const ALAMAT = _Paths.ALAMAT;
+  static const ALAMAT_SAYA = _Paths.ALAMAT_SAYA;
 }
 
 abstract class _Paths {
@@ -27,4 +29,6 @@ abstract class _Paths {
   static const ADMIN_PROFILE = '/admin-profile';
   static const CONSIGN = '/consign';
   static const DETAIL_PESANAN = '/detail-pesanan';
+  static const ALAMAT = '/alamat';
+  static const ALAMAT_SAYA = '/alamat-saya';
 }
