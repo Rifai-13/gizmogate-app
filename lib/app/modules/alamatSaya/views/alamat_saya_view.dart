@@ -12,6 +12,12 @@ class AlamatSayaView extends StatelessWidget {
       appBar: AppBar(
         title: Text('Alamat Saya', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white), // Menambahkan icon back
+          onPressed: () {
+            Get.back(); // Fungsi untuk kembali ke halaman sebelumnya
+          },
+        ),
       ),
       backgroundColor: Colors.black,
       body: SafeArea(

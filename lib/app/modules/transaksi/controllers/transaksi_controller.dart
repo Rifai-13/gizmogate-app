@@ -103,6 +103,22 @@ class TransaksiController extends GetxController {
     }
   }
 
+  void cancelOrder(Product product) {
+  var productIndex = products.indexWhere((prod) => prod.name == product.name);
+
+  if (productIndex != -1) {
+    // Mengubah status produk menjadi "dalamPengiriman" atau status awal
+    products[productIndex].updateStatus("dalamPengiriman");
+
+    // Memperbarui nilai produk dalam RxList
+    products.refresh();
+
+    // Menghapus produk dari daftar transaksi jika diperlukan
+    transactionList.removeWhere((item) => item.name == product.name);
+  }
+}
+
+
   // Fungsi untuk menambahkan ulasan
   void addReview(Review review) {
     reviews.add(review);

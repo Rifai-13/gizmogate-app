@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gizmogate/app/modules/transaksi/controllers/transaksi_controller.dart';
 import '../../navbar/views/navbar_view.dart';
+import '../controllers/order_controller.dart';
 
 class TransaksiView extends GetView<TransaksiController> {
   TransaksiView({super.key});
@@ -9,7 +10,12 @@ class TransaksiView extends GetView<TransaksiController> {
   @override
   Widget build(BuildContext context) {
     final TransaksiController controller = Get.put(TransaksiController());
-     final item = Get.arguments; 
+    final OrderController orderController = Get.find<OrderController>();
+
+    // Mengupdate status untuk pesanan
+    orderController.updateOrderStatus("dalamPengiriman");
+
+    final item = Get.arguments;
 
     return Scaffold(
       appBar: AppBar(
@@ -107,20 +113,47 @@ class TransaksiView extends GetView<TransaksiController> {
                               }),
                           ],
                         ),
-                        trailing: product.status == "pesananSelesai"
-                            ? Text("Selesai",
-                                style: TextStyle(color: Colors.green))
-                            : ElevatedButton(
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (product.status == "pesananSelesai")
+                              ElevatedButton(
                                 onPressed: () {
-                                  controller.markAsCompleted(product); // Perbaiki kesalahan penulisan
+                                  showReviewDialog(context, product);
+                                },
+                                child: Text("Berikan Ulasan"),
+                              ),
+                            if (product.status != "pesananSelesai")
+                              ElevatedButton(
+                                onPressed: () {
+                                  controller.markAsCompleted(product);
+                                  orderController
+                                      .updateOrderStatus("pesananSelesai");
+                                  // Menampilkan pesan pesanan selesai
+                                  Get.snackbar('Pesanan Selesai',
+                                      'Pesanan telah selesai, berikan ulasan!');
                                 },
                                 child: Text("Selesaikan"),
                               ),
-                        onTap: () {
-                          if (product.status == "pesananSelesai") {
-                            showReviewDialog(context, product);
-                          }
-                        },
+                            SizedBox(width: 8), // Jarak antara tombol
+                            if (product.status != "pesananDibatalkan")
+                              ElevatedButton(
+                                onPressed: () {
+                                  controller.cancelOrder(product);
+                                  orderController
+                                      .updateOrderStatus("pesananDibatalkan");
+                                  // Menampilkan pesan pesanan dibatalkan
+                                  Get.snackbar('Pesanan Dibatalkan',
+                                      'Pesanan telah dibatalkan.');
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors
+                                      .red, // Warna merah untuk tombol "Batalkan"
+                                ),
+                                child: Text("Batalkan"),
+                              ),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -135,9 +168,10 @@ class TransaksiView extends GetView<TransaksiController> {
   }
 
   void showReviewDialog(BuildContext context, Product product) {
-    var existingReview = controller.getReviewsForProduct(product.name).isNotEmpty
-        ? controller.getReviewsForProduct(product.name).first
-        : null;
+    var existingReview =
+        controller.getReviewsForProduct(product.name).isNotEmpty
+            ? controller.getReviewsForProduct(product.name).first
+            : null;
 
     TextEditingController commentController = TextEditingController(
       text: existingReview?.comment ?? '',
@@ -186,6 +220,9 @@ class TransaksiView extends GetView<TransaksiController> {
                   );
                 }
                 Navigator.of(context).pop();
+                // Menampilkan pesan bahwa ulasan telah dikirim
+                Get.snackbar('Ulasan Dikirim',
+                    'Terima kasih telah memberikan ulasan!');
               },
               child: Text(
                   existingReview == null ? "Kirim Ulasan" : "Perbarui Ulasan"),

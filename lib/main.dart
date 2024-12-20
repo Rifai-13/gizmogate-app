@@ -8,6 +8,7 @@ import 'package:gizmogate/app/modules/transaksi/controllers/transaksi_controller
 import 'package:gizmogate/firebase_options.dart';
 import 'app/modules/auth-admin/controllers/auth_admin_controller.dart';
 import 'app/modules/shope/controllers/shope_controller.dart';
+import 'app/modules/transaksi/controllers/order_controller.dart';
 import 'app/routes/app_pages.dart';
 
 void main() async {
@@ -24,6 +25,7 @@ void main() async {
   Get.put(TransaksiController());
   Get.put(AlamatController());
   Get.put(AlamatSayaController());
+  Get.put(OrderController());
 
   runApp(
     GetMaterialApp(
