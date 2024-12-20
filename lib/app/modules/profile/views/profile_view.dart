@@ -1,16 +1,28 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../alamat/views/alamat_view.dart';
 import '../../navbar/views/navbar_view.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends StatelessWidget {
+  final ProfileController controller = Get.put(ProfileController());
+
+  // Fetch the current user's email from Firebase Authentication
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
+    // Get the logged-in user's email
+    String email = _auth.currentUser?.email ?? 'Email@gmail.com';
+
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(  // Menggunakan SafeArea untuk menghindari gangguan dengan status bar
-        child: SingleChildScrollView( // Membungkus seluruh konten di dalam SingleChildScrollView
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -19,24 +31,47 @@ class ProfileView extends StatelessWidget {
                 SizedBox(height: 40),
                 Row(
                   children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Colors.grey[300],
+                    GestureDetector(
+                      onTap: () => _showImageOptions(context),
+                      child: Obx(() {
+                        return CircleAvatar(
+                          radius: 40,
+                          backgroundColor: Colors.grey[300],
+                          backgroundImage: controller.profileImage.value != null
+                              ? FileImage(controller.profileImage.value!)
+                              : null,
+                          child: controller.profileImage.value == null
+                              ? Icon(Icons.person, size: 40, color: Colors.grey)
+                              : null,
+                        );
+                      }),
                     ),
                     SizedBox(width: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'User Name',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                        Row(
+                          children: [
+                            Obx(() => Text(
+                                  controller.username.value.isNotEmpty
+                                      ? controller.username.value
+                                      : 'User Name',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                )),
+                            IconButton(
+                              icon: Icon(Icons.edit,
+                                  color: Colors.white, size: 16),
+                              onPressed: () => _editUsername(context),
+                            ),
+                          ],
                         ),
+                        // Display email dynamically from Firebase user
                         Text(
-                          'Email@gmail.com',
+                          email,
                           style: TextStyle(color: Colors.white),
                         ),
                         Text(
@@ -56,15 +91,21 @@ class ProfileView extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  title: Text('Menunggu Pembayaran', style: TextStyle(color: Colors.white)),
+                  title: Text('Alamat', style: TextStyle(color: Colors.white)),
+                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.white),
+                  onTap: () {
+                    // Navigate to AlamatView when "Alamat" is tapped
+                    Get.to(() => AlamatView());
+                  },
+                ),
+                ListTile(
+                  title: Text('Dalam Pengiriman',
+                      style: TextStyle(color: Colors.white)),
                   trailing: Icon(Icons.arrow_forward_ios, color: Colors.white),
                 ),
                 ListTile(
-                  title: Text('Dalam Pengiriman', style: TextStyle(color: Colors.white)),
-                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.white),
-                ),
-                ListTile(
-                  title: Text('Pembelian', style: TextStyle(color: Colors.white)),
+                  title:
+                      Text('Pembelian', style: TextStyle(color: Colors.white)),
                   trailing: Icon(Icons.arrow_forward_ios, color: Colors.white),
                 ),
                 SizedBox(height: 20),
@@ -76,86 +117,129 @@ class ProfileView extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  title: Text('Wishlist', style: TextStyle(color: Colors.white)),
-                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.white),
-                ),
-                ListTile(
-                  title: Text('Pesanan Dikomplain', style: TextStyle(color: Colors.white)),
+                  title:
+                      Text('Wishlist', style: TextStyle(color: Colors.white)),
                   trailing: Icon(Icons.arrow_forward_ios, color: Colors.white),
                 ),
                 SizedBox(height: 20),
-                Text(
-                  'New Upload',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                // Replaced 'New Upload' section with Gizmogate logo text
+                Center(
+                  child: Text(
+                    'Gizmogate',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-                // Membungkus produk dalam Scrollable container
-                Container(
-                  height: 200,  // Membatasi tinggi untuk scroll produk
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,  // Mengurangi ukuran ListView agar tidak meluap
-                    physics: BouncingScrollPhysics(),  // Memberikan efek scroll yang halus
-                    children: [
-                      ProductCard(),
-                      ProductCard(),
-                      ProductCard(),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20), // Menambahkan jarak agar tidak terlalu padat
+                SizedBox(height: 20),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar: const NavbarView(), // Navbar tetap di bawah
+      bottomNavigationBar: const NavbarView(),
     );
   }
-}
 
-class ProductCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 150,
-      margin: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(10),
+  void _showImageOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.grey[900],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 100,
-            color: Colors.grey,
+      builder: (_) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera_alt, color: Colors.white),
+                title: Text('Ambil dari Kamera',
+                    style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  controller.pickImage(ImageSource.camera);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library, color: Colors.white),
+                title: Text('Pilih dari Galeri',
+                    style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  controller.pickImage(ImageSource.gallery);
+                  Navigator.pop(context);
+                },
+              ),
+              if (controller.profileImage.value != null)
+                ListTile(
+                  leading: Icon(Icons.delete, color: Colors.red),
+                  title:
+                      Text('Hapus Gambar', style: TextStyle(color: Colors.red)),
+                  onTap: () {
+                    controller.deleteImage();
+                    Navigator.pop(context);
+                  },
+                ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Asus TUFF i7 9999HX RTX\n4090 Ti 2TB SSD M.2',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        );
+      },
+    );
+  }
+
+  void _editUsername(BuildContext context) {
+    TextEditingController usernameEditingController = TextEditingController();
+    usernameEditingController.text = controller.username.value;
+
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: Colors.grey[900],
+          title: Text('Edit Username', style: TextStyle(color: Colors.white)),
+          content: TextField(
+            controller: usernameEditingController,
+            style: TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              hintText: 'Enter new username',
+              hintStyle: TextStyle(color: Colors.grey),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              'Rp 20.000.000',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          actions: [
+            TextButton(
+              onPressed: () {
+                String newUsername = usernameEditingController.text.trim();
+                if (newUsername.isEmpty) {
+                  Get.snackbar(
+                    'Error',
+                    'Username tidak boleh kosong',
+                    backgroundColor: Colors.red,
+                    colorText: Colors.white,
+                  );
+                  return;
+                }
+                controller.updateUsername(newUsername);
+                Get.snackbar(
+                  'Success',
+                  'Username berhasil diperbarui',
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                );
+                Navigator.pop(context);
+              },
+              child: Text('Save', style: TextStyle(color: Colors.blue)),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '1 Jam Lalu',
-              style: TextStyle(fontSize: 10, color: Colors.grey),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel', style: TextStyle(color: Colors.red)),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 }

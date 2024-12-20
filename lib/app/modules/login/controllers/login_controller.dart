@@ -8,12 +8,13 @@ import '../../../routes/app_pages.dart';
 class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Add usernameController
   var usernameController = TextEditingController();
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
 
   var isLoading = false.obs;
+  var obscurePassword =
+      true.obs; // This variable will control the password visibility
 
   Future<void> signIn() async {
     isLoading.value = true;
@@ -44,9 +45,13 @@ class LoginController extends GetxController {
     }
   }
 
+  void togglePasswordVisibility() {
+    obscurePassword.value = !obscurePassword.value;
+  }
+
   @override
   void dispose() {
-    usernameController.dispose(); // Dispose the usernameController
+    usernameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();

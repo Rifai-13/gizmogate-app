@@ -1,11 +1,15 @@
 import 'package:get/get.dart';
-import 'package:gizmogate/app/modules/admin-profile/bindings/admin_profile_binding.dart';
-import 'package:gizmogate/app/modules/admin-profile/views/admin_profile_view.dart';
-import 'package:gizmogate/app/modules/auth-admin/bindings/auth_admin_bindings.dart';
-import 'package:gizmogate/app/modules/auth-admin/views/auth_admin_view.dart';
-import 'package:gizmogate/app/modules/consign/bindings/consign_binding.dart';
-import 'package:gizmogate/app/modules/consign/views/consign_view.dart';
 
+import '../modules/admin-profile/bindings/admin_profile_binding.dart';
+import '../modules/admin-profile/views/admin_profile_view.dart';
+import '../modules/alamat/bindings/alamat_binding.dart';
+import '../modules/alamat/views/alamat_view.dart';
+import '../modules/alamatSaya/bindings/alamat_saya_binding.dart';
+import '../modules/alamatSaya/views/alamat_saya_view.dart';
+import '../modules/auth-admin/bindings/auth_admin_bindings.dart';
+import '../modules/auth-admin/views/auth_admin_view.dart';
+import '../modules/consign/bindings/consign_binding.dart';
+import '../modules/consign/views/consign_view.dart';
 import '../modules/detail_pesanan/bindings/detail_pesanan_binding.dart';
 import '../modules/detail_pesanan/views/detail_pesanan_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -30,7 +34,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.LOGIN;
 
   static final routes = [
     GetPage(
@@ -87,6 +91,16 @@ class AppPages {
       name: _Paths.DETAIL_PESANAN,
       page: () => DetailPesananView(),
       binding: DetailPesananBinding(),
+    ),
+    GetPage(
+      name: _Paths.ALAMAT,
+      page: () => AlamatView(),
+      binding: AlamatBinding(),
+    ),
+    GetPage(
+      name: _Paths.ALAMAT_SAYA,
+      page: () => AlamatSayaView(),
+      binding: AlamatSayaBinding(),
     ),
   ];
 }

@@ -1,8 +1,7 @@
 import 'package:get/get.dart';
 
 class NavbarController extends GetxController {
-  //TODO: Implement NavbarController
-  var currentIndex = 0.obs;
+  final currentIndex = 0.obs; // Menyimpan indeks navbar aktif
 
   // void changeIndex(int index) {
   //   currentIndex.value = index;
