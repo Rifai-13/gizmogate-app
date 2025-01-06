@@ -12,36 +12,38 @@ class AlamatSayaController extends GetxController {
   RxString kodePos = ''.obs;
   RxString jalan = ''.obs;
 
+  // Ubah alamatList menjadi RxList<Map<String, String>> untuk mengelola alamat lebih detail
+  RxList<Map<String, String>> alamatList = <Map<String, String>>[].obs;
+
   @override
   void onInit() {
     super.onInit();
-    // Membaca data dari GetStorage
-    if (box.read('namaLengkap') != null) {
-      namaLengkap.value = box.read('namaLengkap');
-      noTelpon.value = box.read('noTelpon');
-      provinsi.value = box.read('provinsi');
-      kota.value = box.read('kota');
-      kecamatan.value = box.read('kecamatan');
-      kodePos.value = box.read('kodePos');
-      jalan.value = box.read('jalan');
-    }
+    loadAlamatList();
+  }
+
+  // Fungsi untuk menyimpan alamat
+  void saveAlamat(Map<String, String> alamat) {
+    alamatList.add(alamat);
+    box.write('alamatList', alamatList.toList());
   }
 
   // Fungsi untuk menghapus alamat
-  void deleteAlamat() {
-    box.remove('namaLengkap');
-    box.remove('noTelpon');
-    box.remove('provinsi');
-    box.remove('kota');
-    box.remove('kecamatan');
-    box.remove('kodePos');
-    box.remove('jalan');
-    namaLengkap.value = '';
-    noTelpon.value = '';
-    provinsi.value = '';
-    kota.value = '';
-    kecamatan.value = '';
-    kodePos.value = '';
-    jalan.value = '';
+  void deleteAlamat(int index) {
+    alamatList.removeAt(index); // Menghapus alamat berdasarkan index
+    box.write('alamatList', alamatList.toList());
+  }
+
+  // Fungsi untuk memuat alamat dari GetStorage
+  void loadAlamatList() {
+    var savedAlamatList = box.read('alamatList');
+    if (savedAlamatList != null) {
+      alamatList.assignAll(List<Map<String, String>>.from(savedAlamatList));
+    }
+  }
+
+  // Fungsi untuk memperbarui alamat berdasarkan index
+  void updateAlamat(int index, Map<String, String> updatedAlamat) {
+    alamatList[index] = updatedAlamat;
+    box.write('alamatList', alamatList.toList());
   }
 }

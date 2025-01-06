@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gizmogate/app/modules/alamatSaya/views/alamat_saya_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -95,7 +96,7 @@ class ProfileView extends StatelessWidget {
                   trailing: Icon(Icons.arrow_forward_ios, color: Colors.white),
                   onTap: () {
                     // Navigate to AlamatView when "Alamat" is tapped
-                    Get.to(() => AlamatView());
+                    Get.to(() => AlamatSayaView());
                   },
                 ),
                 ListTile(

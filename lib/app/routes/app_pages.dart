@@ -26,7 +26,6 @@ import '../modules/shope/bindings/shope_binding.dart';
 import '../modules/shope/views/shope_view.dart';
 import '../modules/transaksi/bindings/transaksi_binding.dart';
 import '../modules/transaksi/views/transaksi_view.dart';
-
 // app_pages.dart
 
 part 'app_routes.dart';
@@ -34,7 +33,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.LOGIN;
 
   static final routes = [
     GetPage(
@@ -102,5 +101,6 @@ class AppPages {
       page: () => AlamatSayaView(),
       binding: AlamatSayaBinding(),
     ),
+
   ];
 }

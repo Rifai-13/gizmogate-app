@@ -1,7 +1,8 @@
+// AlamatSayaView
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gizmogate/app/modules/alamat/views/alamat_view.dart';
 import '../controllers/alamat_saya_controller.dart';
-import '../../alamat/views/alamat_view.dart';
 
 class AlamatSayaView extends StatelessWidget {
   final AlamatSayaController controller = Get.find(); // Mengakses controller
@@ -13,9 +14,9 @@ class AlamatSayaView extends StatelessWidget {
         title: Text('Alamat Saya', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // Menambahkan icon back
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Get.back(); // Fungsi untuk kembali ke halaman sebelumnya
+            Get.back();
           },
         ),
       ),
@@ -26,14 +27,13 @@ class AlamatSayaView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Tombol untuk menambah alamat
               ElevatedButton(
                 onPressed: () {
-                  // Pindah ke halaman AlamatView
+                  // Navigasi ke AlamatView untuk menambah alamat baru
                   Get.to(() => AlamatView());
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue, // Warna tombol
+                  backgroundColor: Colors.blue,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -41,10 +41,8 @@ class AlamatSayaView extends StatelessWidget {
                 child: Text('Tambah Alamat'),
               ),
               SizedBox(height: 20),
-              // Menampilkan alamat jika sudah disimpan
               Obx(() {
-                // Jika nama lengkap kosong, tampilkan pesan
-                if (controller.namaLengkap.value.isEmpty) {
+                if (controller.alamatList.isEmpty) {
                   return Center(
                     child: Text(
                       'Alamat belum disimpan',
@@ -53,77 +51,77 @@ class AlamatSayaView extends StatelessWidget {
                   );
                 }
 
-                // Jika ada data, tampilkan dalam Card
-                return Card(
-                  color: Colors.white,
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      // Pindah ke AlamatView untuk mengedit alamat
-                      Get.to(() => AlamatView());
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: controller.alamatList.length,
+                    itemBuilder: (context, index) {
+                      var alamat = controller.alamatList[index];
+                      return Card(
+                        color: Colors.grey[800],
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            // Navigasi ke AlamatView untuk melihat/edit alamat
+                            Get.to(() => AlamatView(alamat: alamat, index: index));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.location_on, color: Colors.blue, size: 24),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        'Alamat ${index + 1}',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.edit, color: Colors.yellow),
+                                      onPressed: () {
+                                        // Arahkan ke halaman edit dengan membawa data alamat yang akan diedit
+                                        Get.to(() => AlamatView(alamat: alamat, index: index));
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Text('Nama Lengkap: ${alamat['namaLengkap']}', style: TextStyle(color: Colors.white70)),
+                                Text('No Telpon: ${alamat['noTelpon']}', style: TextStyle(color: Colors.white70)),
+                                Text('Provinsi: ${alamat['provinsi']}', style: TextStyle(color: Colors.white70)),
+                                Text('Kota: ${alamat['kota']}', style: TextStyle(color: Colors.white70)),
+                                Text('Kecamatan: ${alamat['kecamatan']}', style: TextStyle(color: Colors.white70)),
+                                Text('Kode Pos: ${alamat['kodePos']}', style: TextStyle(color: Colors.white70)),
+                                Text('Jalan: ${alamat['jalan']}', style: TextStyle(color: Colors.white70)),
+                                SizedBox(height: 12),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    controller.deleteAlamat(index); // Hapus alamat jika diperlukan
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: Text('Hapus Alamat'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Nama Lengkap: ${controller.namaLengkap.value}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'No Telpon: ${controller.noTelpon.value}',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Provinsi: ${controller.provinsi.value}',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Kota: ${controller.kota.value}',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Kecamatan: ${controller.kecamatan.value}',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Kode Pos: ${controller.kodePos.value}',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Jalan: ${controller.jalan.value}',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          SizedBox(height: 12),
-                          ElevatedButton(
-                            onPressed: () {
-                              // Menghapus alamat
-                              controller.deleteAlamat();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text('Hapus Alamat'),
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                 );
               }),

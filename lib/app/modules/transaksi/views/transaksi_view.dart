@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gizmogate/app/modules/transaksi/controllers/transaksi_controller.dart';
 import '../../navbar/views/navbar_view.dart';
-import '../controllers/order_controller.dart';
+import '../models/product.dart';
+import '../models/review.dart';
 
 class TransaksiView extends GetView<TransaksiController> {
   TransaksiView({super.key});
@@ -10,12 +11,6 @@ class TransaksiView extends GetView<TransaksiController> {
   @override
   Widget build(BuildContext context) {
     final TransaksiController controller = Get.put(TransaksiController());
-    final OrderController orderController = Get.find<OrderController>();
-
-    // Mengupdate status untuk pesanan
-    orderController.updateOrderStatus("dalamPengiriman");
-
-    final item = Get.arguments;
 
     return Scaffold(
       appBar: AppBar(
@@ -116,6 +111,15 @@ class TransaksiView extends GetView<TransaksiController> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            if (product.status == "dalamPengiriman")
+                              ElevatedButton(
+                                onPressed: () {
+                                  controller.markAsCompleted(product);
+                                  Get.snackbar('Pesanan Selesai',
+                                      'Pesanan telah selesai, berikan ulasan!');
+                                },
+                                child: Text("Selesaikan"),
+                              ),
                             if (product.status == "pesananSelesai")
                               ElevatedButton(
                                 onPressed: () {
@@ -123,32 +127,17 @@ class TransaksiView extends GetView<TransaksiController> {
                                 },
                                 child: Text("Berikan Ulasan"),
                               ),
-                            if (product.status != "pesananSelesai")
-                              ElevatedButton(
-                                onPressed: () {
-                                  controller.markAsCompleted(product);
-                                  orderController
-                                      .updateOrderStatus("pesananSelesai");
-                                  // Menampilkan pesan pesanan selesai
-                                  Get.snackbar('Pesanan Selesai',
-                                      'Pesanan telah selesai, berikan ulasan!');
-                                },
-                                child: Text("Selesaikan"),
-                              ),
-                            SizedBox(width: 8), // Jarak antara tombol
-                            if (product.status != "pesananDibatalkan")
+                            if (product.status == "dalamPengiriman")
+                              SizedBox(width: 8),
+                            if (product.status == "dalamPengiriman")
                               ElevatedButton(
                                 onPressed: () {
                                   controller.cancelOrder(product);
-                                  orderController
-                                      .updateOrderStatus("pesananDibatalkan");
-                                  // Menampilkan pesan pesanan dibatalkan
                                   Get.snackbar('Pesanan Dibatalkan',
                                       'Pesanan telah dibatalkan.');
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors
-                                      .red, // Warna merah untuk tombol "Batalkan"
+                                  backgroundColor: Colors.red,
                                 ),
                                 child: Text("Batalkan"),
                               ),
@@ -221,8 +210,8 @@ class TransaksiView extends GetView<TransaksiController> {
                 }
                 Navigator.of(context).pop();
                 // Menampilkan pesan bahwa ulasan telah dikirim
-                Get.snackbar('Ulasan Dikirim',
-                    'Terima kasih telah memberikan ulasan!');
+                Get.snackbar(
+                    'Ulasan Dikirim', 'Terima kasih telah memberikan ulasan!');
               },
               child: Text(
                   existingReview == null ? "Kirim Ulasan" : "Perbarui Ulasan"),
@@ -234,41 +223,28 @@ class TransaksiView extends GetView<TransaksiController> {
   }
 
   Widget buildFilterButton(
-      TransaksiController controller, TransaksiFilter filter, String title) {
-    return Obx(() {
-      bool isSelected = controller.selectedFilter.value == filter;
-      return GestureDetector(
-        onTap: () => controller.updateFilter(filter),
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      TransaksiController controller, TransaksiFilter filter, String label) {
+    return GestureDetector(
+      onTap: () => controller.updateFilter(filter),
+      child: Obx(
+        () => Container(
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           margin: EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
-            gradient: isSelected
-                ? LinearGradient(colors: [Colors.black, Colors.black])
-                : null,
-            color: isSelected ? null : Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isSelected ? Colors.black : Colors.grey),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 5)
-                  ]
-                : [],
+            color: controller.selectedFilter.value == filter
+                ? Colors.black
+                : Colors.grey[200],
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
-            title,
+            label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+                color: controller.selectedFilter.value == filter
+                    ? Colors.white
+                    : Colors.black),
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 }
