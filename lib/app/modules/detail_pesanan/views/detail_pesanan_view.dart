@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../routes/app_pages.dart';
 import '../../transaksi/controllers/transaksi_controller.dart';
+import '../../transaksi/models/product.dart';
 import '../controllers/detail_pesanan_controller.dart';
 
 class DetailPesananView extends GetView<DetailPesananController> {

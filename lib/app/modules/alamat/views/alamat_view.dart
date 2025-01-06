@@ -4,9 +4,24 @@ import '../controllers/alamat_controller.dart';
 
 class AlamatView extends StatelessWidget {
   final AlamatController controller = Get.find();
+  final Map<String, String>? alamat;
+  final int? index;
+
+  AlamatView({this.alamat, this.index});
 
   @override
   Widget build(BuildContext context) {
+    // Jika index tidak null, kita akan mengisi form dengan alamat yang ada
+    if (index != null && alamat != null) {
+      controller.namaLengkap.value = alamat!['namaLengkap'] ?? '';
+      controller.noTelpon.value = alamat!['noTelpon'] ?? '';
+      controller.provinsi.value = alamat!['provinsi'] ?? '';
+      controller.kota.value = alamat!['kota'] ?? '';
+      controller.kecamatan.value = alamat!['kecamatan'] ?? '';
+      controller.kodePos.value = alamat!['kodePos'] ?? '';
+      controller.jalan.value = alamat!['jalan'] ?? '';
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Alamat', style: TextStyle(color: Colors.white)),
@@ -20,8 +35,6 @@ class AlamatView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
-              SizedBox(height: 20),
               _buildForm(),
               SizedBox(height: 20),
               _buildActionButtons(),
@@ -32,47 +45,6 @@ class AlamatView extends StatelessWidget {
     );
   }
 
-  // Header dengan ikon dan deskripsi
-  Widget _buildHeader() {
-    return Card(
-      color: Colors.grey[800],
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Icon(Icons.home, size: 40, color: Colors.blue),
-            SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Isi dan Simpan Alamat Anda',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Pastikan data yang Anda masukkan lengkap dan benar.',
-                    style: TextStyle(color: Colors.grey[400], fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Form input
   Widget _buildForm() {
     return Column(
       children: [
@@ -87,7 +59,6 @@ class AlamatView extends StatelessWidget {
     );
   }
 
-  // Input field dengan gaya modern
   Widget _buildTextField(String label, RxString controllerValue) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -125,13 +96,16 @@ class AlamatView extends StatelessWidget {
     );
   }
 
-  // Tombol aksi dengan gaya modern
   Widget _buildActionButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         ElevatedButton.icon(
-          onPressed: () => controller.saveAlamat(),
+          onPressed: () {
+            // Panggil fungsi saveAlamat di controller untuk menangani logika simpan atau update
+            controller.saveAlamat(index);
+            Get.back();
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,
             shape: RoundedRectangleBorder(
@@ -141,30 +115,6 @@ class AlamatView extends StatelessWidget {
           ),
           icon: Icon(Icons.save, color: Colors.white),
           label: Text('Simpan', style: TextStyle(color: Colors.white)),
-        ),
-        ElevatedButton.icon(
-          onPressed: () => controller.editAlamat(),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          ),
-          icon: Icon(Icons.edit, color: Colors.white),
-          label: Text('Edit', style: TextStyle(color: Colors.white)),
-        ),
-        ElevatedButton.icon(
-          onPressed: () => controller.deleteAlamat(),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          ),
-          icon: Icon(Icons.delete, color: Colors.white),
-          label: Text('Hapus', style: TextStyle(color: Colors.white)),
         ),
       ],
     );
