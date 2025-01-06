@@ -172,18 +172,12 @@ class HomeView extends GetView<HomeController> {
             Container(
               height: 150, // Tinggi container gambar
               child: PageView.builder(
-                itemCount: 3, // Jumlah slide yang akan ditampilkan
+                itemCount: 4, // Jumlah slide yang akan ditampilkan
                 onPageChanged: (index) {
                   controller.updateSliderIndex(
                       index); // Update index saat halaman digeser
                 },
                 itemBuilder: (context, index) {
-                  // Daftar teks diskon untuk setiap gambar
-                  List<String> discountTexts = [
-                    "Diskon 30%! Special Idul Fitri",
-                    "Diskon 20%! Special Natal",
-                    "Diskon 10%! Special Tahun Baru",
-                  ];
                   String imagePath =
                       'assets/slide${index + 1}.jpg'; // Gambar berdasarkan index
                   return Padding(
@@ -215,29 +209,6 @@ class HomeView extends GetView<HomeController> {
                             ),
                           ),
                         ),
-                        Positioned(
-                          bottom: 10, // Jarak dari bawah container
-                          left: 10, // Jarak dari kiri container
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4), // Padding teks
-                            decoration: BoxDecoration(
-                              color:
-                                  Colors.black54, // Latar belakang transparan
-                              borderRadius:
-                                  BorderRadius.circular(5), // Membulatkan sudut
-                            ),
-                            child: Text(
-                              discountTexts[
-                                  index], // Teks diskon sesuai index gambar
-                              style: TextStyle(
-                                color: Colors.white, // Warna teks putih
-                                fontWeight: FontWeight.bold, // Teks tebal
-                                fontSize: 12, // Ukuran teks
-                              ),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   );
@@ -247,7 +218,7 @@ class HomeView extends GetView<HomeController> {
             Obx(() {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(3, (index) {
+                children: List.generate(4, (index) {
                   return Container(
                     margin:
                         const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
@@ -342,7 +313,7 @@ class HomeView extends GetView<HomeController> {
               name,
               style: const TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.bold, 
                 color: Colors.white,
               ),
             ),
